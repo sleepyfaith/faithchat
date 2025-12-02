@@ -3,7 +3,6 @@ import { syncMessages } from "./messages.js";
 import { initChatList } from "./chats.js";
 
 
-export const ENDPOINT = "http://localhost:20349"
 export const userCache = {};
 
 export let selectedChat = null;

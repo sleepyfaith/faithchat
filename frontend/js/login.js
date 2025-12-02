@@ -1,4 +1,4 @@
-import { ENDPOINT } from "./app.js";
+const ENDPOINT = "http://localhost:20349"
 
 document.getElementById("login-form").addEventListener("submit", async(e) => {
     e.preventDefault(); // stop normal form submission

@@ -64,9 +64,6 @@ export async function syncMessages() {
         const message = messages[i]
         const user = userCache[message.sender_id];
 
-        console.log(message.chat_id)
-        console.log(selectedChat)
-
         // ignore messages that have chat ids that dont match the selected chat id
         if (message.chat_id != selectedChat) {
             return
