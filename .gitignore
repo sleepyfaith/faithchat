@@ -1,0 +1,3 @@
+backend/pfp_storage/
+backend/data.db
+backend/__pycache__/

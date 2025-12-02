@@ -1,0 +1,41 @@
+:root {
+    --base-colour: 260;
+}
+
+html.light {
+    --bg-dark: hsl(var(--base-colour), 100%, 95%) !important;
+    --bg: hsl(var(--base-colour), 100%, 93%) !important;
+    --bg-light: hsl(var(--base-colour), 100%, 85%) !important;
+
+    --text-bright: hsl(var(--base-colour), 100%, 10%);
+    --text: hsl(var(--base-colour), 100%, 25%) !important;
+    --text-muted: hsl(var(--base-colour), 50%, 50%) !important;
+
+    --warning: 0, 100%, 50% !important;
+
+    --border-strong: hsl(var(--base-colour), 50%, 50%, 1) !important;
+    --border-normal: hsl(var(--base-colour), 50%, 50%, 0.75) !important;
+    --border-subtle: hsl(var(--base-colour), 50%, 50%, 0.5) !important;
+    --border-faint: hsl(var(--base-colour), 50%, 50%, 0.25) !important;
+
+
+
+}
+html.dark {
+    --bg-dark: hsl(var(--base-colour), 100%, 5%);
+    --bg: hsl(var(--base-colour), 100%, 10%);
+    --bg-light: hsl(var(--base-colour), 100%, 20%) !important;
+
+    --text-bright: hsl(var(--base-colour), 100%, 90%);
+    --text: hsl(var(--base-colour), 100%, 75%) !important;
+    --text-muted: hsl(var(--base-colour), 50%, 50%) !important;
+
+    --border-strong: hsl(var(--base-colour), 50%, 50%, 1) !important;
+    --border-normal: hsl(var(--base-colour), 50%, 50%, 0.75) !important;
+    --border-subtle: hsl(var(--base-colour), 50%, 50%, 0.5) !important;
+    --border-faint: hsl(var(--base-colour), 50%, 50%, 0.25) !important;
+
+
+    --warning: 0, 100%, 50% !important;
+
+}

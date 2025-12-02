@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>bleh :p</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../css/common.css" />
+        <link rel="stylesheet" href="../css/app.css" />
+
+    </head>
+    <body>
+        <div class="app-container">
+            <div id="profile-popup" class="hidden popup"></div>
+            <div class="left sidebar">
+                <div class="profile-menu" id="profile-menu"></div>
+                <div class="chat-list" id="chats"></div>
+            </div>
+            <div class="centre-container">
+                <div class="message-container" id="msg-container"></div>
+                <div class="chatbox-container">
+                    <textarea id="msg" placeholder="message the chat :3"></textarea>
+                </div>
+            </div>
+            <div class="right sidebar">
+                <button id="settings-button">⚙</button>
+
+                <div class="settings-menu hidden" id="settings">
+                    <div class="separator">appearance</div>
+                    <input id="hue-slider" type="range" min="0" max="360">
+                    <div class="theme-toggle">
+                        <div class="switch-container">
+                        <span class="switch-label" data-i18n="settings.theme">dark mode</span>
+                        <label class="switch" for="theme-switch">
+                        <input id="theme-switch" type="checkbox" ${checked}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>  
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+    <script src="../js/app.js" type="module"></script>
+</html>
