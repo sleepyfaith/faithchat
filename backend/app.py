@@ -11,6 +11,12 @@ import os
 from generate_pfp import generate_user_pfp
 
 
+# TODO:
+# filter messages by chat on the backend for security
+# implement servers that contain chats rather than all chats being available in one place with "owner" and admin roles
+# implement user relationships (friends, blocklist, etc)
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -58,7 +64,6 @@ CREATE TABLE IF NOT EXISTS chats(
 database.commit()
 
 
-from flask import g
 
 def get_db():
     if 'db' not in g:
@@ -73,7 +78,7 @@ def close_db(exception):
         db.close()
 
 
-
+# called via front end to register a user
 @app.post("/register")
 def register():
     data = request.json
@@ -94,6 +99,7 @@ def register():
     
     return jsonify(ok=True)
 
+# called via front end to login as a user
 @app.post("/login")
 def login():
     data = request.json
@@ -115,6 +121,7 @@ def login():
     
     return jsonify(ok=False)
 
+# called via front end to send a message as a user
 @app.post("/message")
 def message():
 
@@ -146,6 +153,7 @@ def message():
     
     return jsonify(ok=True)
 
+# called via front end to update the current profile picture for a user
 @app.post("/update_pfp")
 def update_pfp():
     session_id = request.form.get("session_id")
@@ -185,6 +193,7 @@ def update_pfp():
     return jsonify(ok=True, pfp_id=filename)
 # GET 
 
+# called by the front end and returns back a list of chats 
 @app.get("/chats")
 def get_chats():
     db = get_db()
@@ -197,6 +206,7 @@ def get_chats():
     ]
     return jsonify(chats=chats)
 
+# called by front end and returns back a list of messages
 @app.get("/messages")
 def get_messages():
     db = get_db()
@@ -210,6 +220,7 @@ def get_messages():
     ]
     return jsonify(messages=messages)
 
+# called by the front end with a user id and returns back the users information
 @app.get("/user")
 def get_user():
     user_id = request.args.get("id")
@@ -234,6 +245,7 @@ def get_user():
         created_at=row[4]
     )
 
+# called by the front end with a user id and returns back a deterministically generated pfp
 @app.get("/default_pfp")
 def get_default_pfp():
     user_id = request.args.get("id")
@@ -247,6 +259,7 @@ def get_default_pfp():
 
     return send_file(buf, mimetype="image/png")
 
+# called by the front end with a user id and returns back the users current profile picture if present
 @app.get("/pfp")
 def get_pfp():
     pfp_id = request.args.get("id")
@@ -266,6 +279,8 @@ def get_pfp():
 
 
 # PATCH
+
+# called by the front end with either/both a bio, username and a users session id and updates the database with the changes
 @app.patch("/edit_user")
 def edit_user():
     data = request.json
@@ -274,8 +289,6 @@ def edit_user():
     username = data.get("username")
 
     session_id = data["session_id"]
-
-    print(bio, username, session_id)
 
     db = get_db()
     cursor = db.cursor()
