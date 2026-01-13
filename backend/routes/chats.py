@@ -4,7 +4,7 @@ from utils import get_db, require_user, require_chat_access
 
 chats_bp = Blueprint("chats", __name__)
 
-@chats_bp.post("/create_chat")
+@chats_bp.post("/create")
 def create_chat():
     data = request.json
     server_id = data.get("server_id")

@@ -4,7 +4,7 @@ from utils import get_db, require_user
 
 servers_bp = Blueprint("servers", __name__)
 
-@servers_bp.post("/create_server")
+@servers_bp.post("/create")
 def create_server():
     data = request.json
     name = data.get("name")

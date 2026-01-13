@@ -17,6 +17,8 @@ def register():
 
     db = get_db()
     cursor = db.cursor()
+
+
     try:
         cursor.execute(
             "INSERT INTO users (id, username, hash) VALUES (?, ?, ?)",
