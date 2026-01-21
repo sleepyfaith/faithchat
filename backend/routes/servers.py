@@ -50,3 +50,27 @@ def list_servers():
         for r in rows
     ]
     return jsonify(servers=servers)
+
+@servers_bp.get("/get")
+def get_server():
+    db = get_db()
+    user_id, error, status = require_user(db)
+    if error:
+        return error, status
+
+    server_id = request.args.get("server_id")
+    if not server_id: 
+        return jsonify(ok=False, reason="missing server_id")
+
+    rows = db.execute(
+        "SELECT servers.id, servers.name, servers.owner_id, servers.created_at "
+        "FROM servers JOIN server_members ON servers.id = server_members.server_id "
+        "WHERE server_members.user_id = ? AND servers.id = ?",
+        (user_id, server_id)
+    ).fetchall()
+
+    servers = [
+        {"id": r[0], "name": r[1], "owner_id": r[2], "created_at": r[3]}
+        for r in rows
+    ]
+    return jsonify(servers=servers)

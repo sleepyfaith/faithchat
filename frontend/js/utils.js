@@ -6,8 +6,11 @@ import { initServerList } from "./servers.js";
 export let selectedChat = null;
 export let selectedServer = null;
 
+
 export function setSelectedChat(chatId) {
     selectedChat = chatId;
+    updateTitlebar();
+
     localStorage.setItem("selected-chat", chatId)
 
     const chatbox = document.getElementById("msg")
@@ -19,6 +22,7 @@ export function setSelectedServer(serverId) {
     selectedServer = serverId;
     clearMessagesFromChat();
     setSelectedChat(null);
+    updateTitlebar();
     localStorage.setItem("selected-server", serverId)
 }
 export function loadSelectedChat() {
@@ -29,6 +33,34 @@ export function loadSelectedChat() {
 export function loadSelectedServer() {
     const server = localStorage.getItem("selected-server")
     if (server != "null") setSelectedServer(server)
+}
+
+export async function updateTitlebar() {
+    const titlebar = document.getElementById("app-titlebar")
+
+    const serverResponse = await fetch(ENDPOINT+"/servers/get?server_id="+selectedServer, {
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("session_token")
+        }
+    })
+    const serverData = await serverResponse.json()
+    const server = serverData.servers[0]
+    titlebar.textContent = server.name
+
+    if (selectedChat) {
+        const chatResponse = await fetch(ENDPOINT+"/chats/get?chat_id="+selectedChat, {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("session_token")
+            }
+        })
+        const chatData = await chatResponse.json()
+        console.log(chatData)
+        const chat = chatData.chats[0]
+        if (chat) titlebar.textContent = titlebar.textContent + " - " + chat.name
+
+    }
+
+
 }
 
 // toggle the current theme between dark mode and light mode
@@ -139,10 +171,10 @@ export async function sendMessage() {
         },
         body: JSON.stringify({ message: message, chat_id: selectedChat })
     })
+    syncMessages()
 
     document.getElementById("msg").value = "";
     
-    syncMessages()
 
 }
 

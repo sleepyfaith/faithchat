@@ -35,16 +35,27 @@ def get_chats():
         return error, status
 
     server_id = request.args.get("server_id")
-    if not server_id:
-        return jsonify(ok=False, reason="missing server id")
+    chat_id = request.args.get("chat_id")
+
+    if not (server_id or chat_id):
+        return jsonify(ok=False, reason="missing server or chat id")
 
 
-    chat_rows = db.execute(
-        "SELECT chats.id, chats.name, chats.created_at, chats.created_by, chats.type, chats.admin_only "
-        "FROM chats JOIN server_members ON server_members.server_id = chats.server_id "
-        "WHERE server_members.user_id = ? AND chats.server_id = ? ORDER BY chats.created_at ASC",
-        (user_id, server_id)
-    ).fetchall()
+    if server_id:    
+        chat_rows = db.execute(
+            "SELECT chats.id, chats.name, chats.created_at, chats.created_by, chats.type, chats.admin_only "
+            "FROM chats JOIN server_members ON server_members.server_id = chats.server_id "
+            "WHERE server_members.user_id = ? AND chats.server_id = ? ORDER BY chats.created_at ASC",
+            (user_id, server_id)
+        ).fetchall()
+
+    else: 
+        chat_rows = db.execute(
+            "SELECT chats.id, chats.name, chats.created_at, chats.created_by, chats.type, chats.admin_only "
+            "FROM chats JOIN server_members ON server_members.server_id = chats.server_id "
+            "WHERE server_members.user_id = ? AND chats.id = ? ORDER BY chats.created_at ASC",
+            (user_id, chat_id)
+        ).fetchall()
 
     chats = [
         {"id": r[0], "name": r[1], "created_at": r[2], "created_by": r[3], "type": r[4], "admin_only": r[5]}

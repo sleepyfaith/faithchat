@@ -9,6 +9,7 @@ body {
 }
 
 .app-container {
+    margin: 0;
     display: flex;
     height: 100vh;
 }
@@ -23,6 +24,7 @@ body {
     padding-left: 1rem;
 }
 .centre-container {
+    margin: 0;
     position: relative;
     width: 49%;
 
@@ -30,6 +32,17 @@ body {
     border-color: var(--border-faint);
     border-width: 0px 1px;
     padding: 1rem;
+}
+
+#app-titlebar {
+    margin: 0;
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
+    line-height: 0ch;
+    padding-bottom: 1ch;
+    border-bottom: 2px solid var(--border-faint);
+    color: var(--text-muted);
 }
 
 .server-list {
@@ -41,7 +54,9 @@ body {
     color: var(--text-muted);
 
     display: flex;
-
+    flex-wrap: wrap;
+    gap: 1ch 0ch;
+    justify-content: center;
     .chat-container {
         display: flex;
         justify-content: center;
@@ -83,14 +98,14 @@ body {
         cursor: pointer;
         min-width: 25ch;
         border-radius: 10px;
+        line-height: 1.5;
     }
     .chat-container:hover {
         color: var(--text);
-        background-color: rgba(0,0,0,0.2);
+        background-color: rgba(0,0,0,0.2)
     }
     .chat-icon {
         font-size: 1.5rem;
-        line-height: 1.5;
     }
     .chat-name {
         font-size: 1.5rem;
@@ -320,7 +335,8 @@ dialog::backdrop {
 
 
 .message-container {
-    height: calc(100% - 3.5rem);
+    margin-top: 0.2rem;
+    height: calc(100% - 3.7rem);
 }
 
 .message {
@@ -391,6 +407,10 @@ dialog::backdrop {
         line-height: 3.25;
         font-size: 0.9rem;
         color: var(--text);
+    }
+    textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 50%;
     }
 }
 

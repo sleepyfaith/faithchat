@@ -21,7 +21,6 @@ export async function initChatList() {
     })
     const data = await response.json()
     const chats = data.chats
-
     const chatList = document.getElementById("chats")
     const fragment = document.createDocumentFragment();
 

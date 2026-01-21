@@ -20,7 +20,7 @@ box.addEventListener("keydown", (e) => {
         }
 
         e.preventDefault();             // stop newline
-        sendMessage();                         // send message
+        sendMessage();                  // send message
 
         setTimeout(syncMessages, 100)   // sync messages after sending
     }
