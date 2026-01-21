@@ -47,7 +47,7 @@ def get_pfp():
     return send_file(pfp_filename, mimetype=mimetype or "application/octet-stream")
 
 
-@pfps_bp.get("/default_pfp")
+@pfps_bp.get("/default")
 def get_default_pfp():
     user_id = request.args.get("id")
     if not user_id:

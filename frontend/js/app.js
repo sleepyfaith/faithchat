@@ -1,16 +1,15 @@
-import { toggleTheme, updateTheme, loadTheme, toggleSettingsView, initProfileView } from "./utils.js";
+import { toggleTheme, updateTheme, loadTheme, toggleSettingsView, initProfileView, sendMessage, clearMessagesFromChat, loadSelectedServer, loadSelectedChat} from "./utils.js";
 import { syncMessages } from "./messages.js";
 import { initChatList } from "./chats.js";
+import { initServerList } from "./servers.js";
 
 export const ENDPOINT = "http://localhost:20349"
 export const userCache = {};
-export let selectedChat = null;
 
-export function setSelectedChat(chatId) {
-    selectedChat = chatId;
-}
+loadSelectedServer()
+initServerList()
+loadSelectedChat()
 initChatList()
-
 
 // when typing in chat box send message on enter but not when shift + enter
 const box = document.getElementById("msg");
@@ -21,7 +20,7 @@ box.addEventListener("keydown", (e) => {
         }
 
         e.preventDefault();             // stop newline
-        send();                         // send message
+        sendMessage();                         // send message
 
         setTimeout(syncMessages, 100)   // sync messages after sending
     }

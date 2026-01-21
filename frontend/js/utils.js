@@ -1,6 +1,35 @@
 import { ENDPOINT, userCache } from "./app.js"
 import { updateUser } from "./users.js";
 import { syncMessages } from "./messages.js";
+import { initServerList } from "./servers.js";
+
+export let selectedChat = null;
+export let selectedServer = null;
+
+export function setSelectedChat(chatId) {
+    selectedChat = chatId;
+    localStorage.setItem("selected-chat", chatId)
+
+    const chatbox = document.getElementById("msg")
+    if (chatbox.classList.contains("hidden")) {
+        chatbox.classList.remove("hidden")
+    }
+}
+export function setSelectedServer(serverId) {
+    selectedServer = serverId;
+    clearMessagesFromChat();
+    setSelectedChat(null);
+    localStorage.setItem("selected-server", serverId)
+}
+export function loadSelectedChat() {
+    const chat = localStorage.getItem("selected-chat")
+    
+    if (chat != "null") setSelectedChat(chat)
+}
+export function loadSelectedServer() {
+    const server = localStorage.getItem("selected-server")
+    if (server != "null") setSelectedServer(server)
+}
 
 // toggle the current theme between dark mode and light mode
 export function toggleTheme() { 
@@ -102,17 +131,19 @@ export async function sendMessage() {
     const token = localStorage.getItem("session_token");
     const message = document.getElementById("msg").value
 
-    const response = fetch(ENDPOINT+"/message", {
+    const response = fetch(ENDPOINT+"/chats/message", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message: message, chat_id: selectedChat })
     })
 
     document.getElementById("msg").value = "";
     
+    syncMessages()
+
 }
 
 // toggle visibility of the settings menu in the right sidebar
@@ -125,7 +156,7 @@ export async function initProfileView() {
 
     const id = localStorage.getItem("logged_in_user");
 
-    const res = await fetch(`${ENDPOINT}/user?id=${id}`);
+    const res = await fetch(`${ENDPOINT}/users/user?id=${id}`);
     const user = await res.json();
     userCache[id] = user;
 
@@ -150,9 +181,9 @@ export async function initProfileView() {
 
     const pfp = document.createElement("img");
     if (user.pfp_id == null) {
-        pfp.src = ENDPOINT + "/default_pfp?id=" + user.id;
+        pfp.src = ENDPOINT + "/pfps/default?id=" + user.id;
     } else {
-        pfp.src = ENDPOINT + "/pfp?id=" + user.pfp_id;
+        pfp.src = ENDPOINT + "/pfps/pfp?id=" + user.pfp_id;
     }
 
     header.appendChild(pfp);
@@ -264,3 +295,9 @@ export async function initProfileView() {
 
     editProfileBtn.addEventListener("click", enterEditMode);
 }
+
+export async function clearMessagesFromChat() {
+    document.getElementById("msg-container").innerHTML = ""
+}
+
+

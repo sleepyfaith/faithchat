@@ -9,9 +9,14 @@
     </head>
     <body>
         <div class="app-container">
+            <dialog id="create-chat-popup" class="popup"></dialog>
+            <dialog id="create-server-popup" class="popup"></dialog>
+
             <div id="profile-popup" class="hidden popup"></div>
             <div class="left sidebar">
                 <div class="profile-menu" id="profile-menu"></div>
+                <div class="server-list" id="servers">
+                </div>
                 <div class="chat-list" id="chats"></div>
             </div>
             <div class="centre-container">
@@ -30,7 +35,7 @@
                         <div class="switch-container">
                         <span class="switch-label" data-i18n="settings.theme">dark mode</span>
                         <label class="switch" for="theme-switch">
-                        <input id="theme-switch" type="checkbox" ${checked}>
+                        <input id="theme-switch" type="checkbox">
                             <span class="slider round"></span>
                         </label>
                     </div>  

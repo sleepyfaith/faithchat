@@ -10,7 +10,6 @@ export async function updateUser(data) {
             body: JSON.stringify(data)
         });
         const result = await response.json();
-        console.log("Update result:", result);
     } catch (err) {
         console.error("Error updating user:", err);
     }
@@ -37,7 +36,7 @@ export async function showProfilePopup(element, user_id) {
 
         const pfp = document.createElement("img")
         if (user.pfp_id == null) {
-            pfp.src = ENDPOINT+"/default_pfp?id="+user.id
+            pfp.src = ENDPOINT+"/pfps/default?id="+user.id
         }
 
         header.appendChild(pfp)

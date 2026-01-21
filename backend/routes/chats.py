@@ -10,7 +10,7 @@ def create_chat():
     server_id = data.get("server_id")
     name = data.get("name", "")
     if not server_id:
-        return jsonify(ok=False, reason="missing server_id")
+        return jsonify(ok=False, reason="missing chat_id")
 
     db = get_db()
     user_id, error, status = require_user(db)
@@ -27,18 +27,23 @@ def create_chat():
     return jsonify(ok=True, chat_id=chat_id)
 
 
-@chats_bp.get("/")
+@chats_bp.get("/get")
 def get_chats():
     db = get_db()
     user_id, error, status = require_user(db)
     if error:
         return error, status
 
+    server_id = request.args.get("server_id")
+    if not server_id:
+        return jsonify(ok=False, reason="missing server id")
+
+
     chat_rows = db.execute(
         "SELECT chats.id, chats.name, chats.created_at, chats.created_by, chats.type, chats.admin_only "
         "FROM chats JOIN server_members ON server_members.server_id = chats.server_id "
-        "WHERE server_members.user_id = ? ORDER BY chats.created_at ASC",
-        (user_id,)
+        "WHERE server_members.user_id = ? AND chats.server_id = ? ORDER BY chats.created_at ASC",
+        (user_id, server_id)
     ).fetchall()
 
     chats = [
