@@ -56,7 +56,7 @@ def login():
     return jsonify(ok=False)
 
 
-@users_bp.patch("/edit_user")
+@users_bp.patch("/edit")
 def edit_user():
     data = request.json
     bio = data.get("bio")
