@@ -1,4 +1,6 @@
 import sqlite3
+import secrets
+import string
 from flask import g, request, jsonify, current_app
 
 def init_db(app):
@@ -18,7 +20,8 @@ def init_db(app):
         CREATE TABLE IF NOT EXISTS servers(
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL, 
-            owner_id TEXT NOT NULL, 
+            owner_id TEXT NOT NULL,
+            invite TEXT NOT NULL, 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
             FOREIGN KEY (owner_id) REFERENCES users(id) ) """) 
         database_cursor.execute(""" 
@@ -116,3 +119,7 @@ def require_chat_access(db, user_id, chat_id):
         (chat_id, user_id)
     ).fetchone()
     return row is not None
+
+def generate_invite_code(length=8):
+    characters = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(characters) for _ in range(length))

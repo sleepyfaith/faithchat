@@ -67,20 +67,21 @@ if __name__ == "__main__":
             assert login_data["ok"] is True
             token = login_data["token"]
             headers = {"Authorization": f"Bearer {token}"}
-
+            
+        
             # 6. edit bio
-            r = client.patch("/users/edit_user", json={"bio": "Hello world"}, headers=headers)
+            r = client.patch("/users/edit", json={"bio": "Hello world"}, headers=headers)
             print("[test 6] edit bio:", r.status_code, r.get_json())
             assert r.get_json()["ok"] is True
 
             # 7. edit username to something new
-            r = client.patch("/users/edit_user", json={"username": "newname"}, headers=headers)
+            r = client.patch("/users/edit", json={"username": "newname"}, headers=headers)
             print("[test 7] edit username:", r.status_code, r.get_json())
             assert r.get_json()["ok"] is True
 
             # 8. edit username to duplicate (should fail)
             client.post("/users/register", json={"username": "anotheruser", "password": "123"})
-            r = client.patch("/users/edit_user", json={"username": "anotheruser"}, headers=headers)
+            r = client.patch("/users/edit", json={"username": "anotheruser"}, headers=headers)
             print("[test 8] edit username duplicate:", r.status_code, r.get_json())
             assert r.get_json()["ok"] is False
 
@@ -92,29 +93,50 @@ if __name__ == "__main__":
             assert server_data["ok"] is True
             server_id = server_data["server_id"]
 
-            # 10. create chat in server
+            # 10. get invite code
+            r = client.get(f"/servers/invite?server_id={server_id}", headers=headers)
+            invite_data = r.get_json()
+            print("[test 10] get invite:", r.status_code, invite_data)
+            assert invite_data["ok"] is True
+            invite = invite_data["invite"]
+
+            # 11. join from invite as a current member
+            r = client.post(f"/servers/join?invite={invite}", headers=headers)
+            join_data = r.get_json()
+            print("[test 11] join server as existing member:", r.status_code, join_data)
+            assert join_data["ok"] is False
+
+            #12. join from invite as new user
+            r = client.post("/users/login", json={"username": "anotheruser", "password": "123"})
+            login_data = r.get_json()
+            r = client.post(f"/servers/join?invite={invite}", headers={"Authorization": f"Bearer {login_data["token"]}"})
+            join_data = r.get_json()
+            print("[test 12] join server as new member:", r.status_code, join_data)
+            assert join_data["ok"] is True
+
+            # 12. create chat in server
             r = client.post("/chats/create", json={"name": "general", "server_id": server_id}, headers=headers)
             chat_data = r.get_json()
-            print("[test 10] create chat:", r.status_code, chat_data)
+            print("[test 12] create chat:", r.status_code, chat_data)
             assert chat_data["ok"] is True
             chat_id = chat_data["chat_id"]
 
-            # 11. send message
+            # 13. send message
             r = client.post("/chats/message", json={"chat_id": chat_id, "message": "Hello!"}, headers=headers)
-            print("[test 11] send message:", r.status_code, r.get_json())
+            print("[test 13] send message:", r.status_code, r.get_json())
             assert r.get_json()["ok"] is True
 
-            # 12. get messages
+            # 14. get messages
             r = client.get(f"/chats/messages?chat_id={chat_id}", headers=headers)
-            print("[test 12] get messages:", r.status_code, r.get_json())
+            print("[test 14] get messages:", r.status_code, r.get_json())
             messages = r.get_json()["messages"]
             assert len(messages) == 1
             assert messages[0]["content"] == "Hello!"
 
             print("\n=== PROFILE PICTURE TESTS ===")
-            # 13. default pfp
-            r = client.get(f"/pfps/default_pfp?id={login_data['user_id']}")
-            print("[test 13] default pfp:", r.status_code)
+            # 15. default pfp
+            r = client.get(f"/pfps/default?id={login_data['user_id']}")
+            print("[test 15] default pfp:", r.status_code)
             assert r.status_code == 200
 
             print("\nall in-memory tests passed successfully!")
