@@ -11,16 +11,18 @@
         <div class="app-container">
             <dialog id="create-chat-popup" class="popup"></dialog>
             <dialog id="create-server-popup" class="popup"></dialog>
+            <dialog id="join-server-popup" class="popup"></dialog>
 
             <div id="profile-popup" class="hidden popup"></div>
             <div class="left sidebar">
-                <div class="profile-menu" id="profile-menu"></div>
-                <div class="server-list" id="servers">
+                <div class="server-list" id="servers"></div>
+                <div class="main-container">
+                    <div class="server-info" id="server-info"></div>
+                    <div class="chat-list" id="chats"></div>
+                    <div class="profile-menu" id="profile-menu"></div>
                 </div>
-                <div class="chat-list" id="chats"></div>
             </div>
             <div class="centre-container">
-                <div id="app-titlebar"></div>
                 <div class="message-container" id="msg-container"></div>
                 <div class="chatbox-container">
                     <textarea id="msg" placeholder="message the chat :3"></textarea>

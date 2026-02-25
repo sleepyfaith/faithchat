@@ -79,20 +79,80 @@ async function openCreateServerPopup() {
     createButton.textContent = "create"
     createButton.classList = "submit button"
     
+    const joinButton = document.createElement("button")
+    joinButton.classList = "join link"
+    const textSpan = document.createElement("span");
+    textSpan.classList.add("text");
+    textSpan.textContent = "join here";
+
+    joinButton.appendChild(textSpan);
+
 
     form.append(header, nameInput, createButton)
     popup.append(form)
-
+    popup.append(joinButton)
+    
     form.addEventListener("submit", (e) => {
         e.preventDefault()
         createServer(nameInput.value)
         popup.close()
     })
+    joinButton.addEventListener("click", () => {
+        popup.close()
+        openJoinServerPopup()
+    })
+
 
     popup.showModal()
     nameInput.focus()
 }
+async function openJoinServerPopup() {
+    const popup = document.getElementById("join-server-popup")
+    popup.innerHTML = "";
 
+    const form = document.createElement("form")
+
+
+    const header = document.createElement("p")
+    header.classList = "title"
+    header.textContent = "create a server"
+
+    const inviteInput = document.createElement("input")
+    inviteInput.placeholder = "invite code"
+    inviteInput.classList = "server-invite textinput"
+    
+    const joinButton = document.createElement("button")
+    joinButton.textContent = "join"
+    joinButton.classList = "submit button"
+    
+    const createButton = document.createElement("button")
+    createButton.classList = "create link"
+    const textSpan = document.createElement("span");
+    textSpan.classList.add("text");
+    textSpan.textContent = "create one";
+
+    createButton.appendChild(textSpan);
+
+
+
+    form.append(header, inviteInput, joinButton)
+    popup.append(form)
+    popup.append(createButton)
+    
+    form.addEventListener("submit", (e) => {
+        e.preventDefault()
+        joinServer(inviteInput.value)
+        popup.close()
+    })
+    createButton.addEventListener("click", () => {
+        popup.close()
+        openCreateServerPopup()
+    })
+
+
+    popup.showModal()
+    inviteInput.focus()
+}
 async function createServer(name) {
     const response = await fetch(ENDPOINT+"/servers/create", {
         method: "POST",
@@ -106,6 +166,20 @@ async function createServer(name) {
     })
     if (!response.ok) {
         throw new Error("failed to create server "+name)
+    }
+    initServerList()
+
+}
+async function joinServer(code) {
+    const response = await fetch(ENDPOINT+"/servers/join?invite="+code, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("session_token"),
+            "Content-Type": "application/json"
+        },
+    })
+    if (!response.ok) {
+        throw new Error("failed to join server ", response.data)
     }
     initServerList()
 

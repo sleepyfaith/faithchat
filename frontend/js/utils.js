@@ -9,7 +9,6 @@ export let selectedServer = null;
 
 export function setSelectedChat(chatId) {
     selectedChat = chatId;
-    updateTitlebar();
 
     localStorage.setItem("selected-chat", chatId)
 
@@ -22,7 +21,7 @@ export function setSelectedServer(serverId) {
     selectedServer = serverId;
     clearMessagesFromChat();
     setSelectedChat(null);
-    updateTitlebar();
+    updateServerInfo();
     localStorage.setItem("selected-server", serverId)
 }
 export function loadSelectedChat() {
@@ -35,9 +34,9 @@ export function loadSelectedServer() {
     if (server != "null") setSelectedServer(server)
 }
 
-export async function updateTitlebar() {
-    const titlebar = document.getElementById("app-titlebar")
-
+export async function updateServerInfo() {
+    const titlebar = document.getElementById("server-info")
+    titlebar.innerHTML = ""
     const serverResponse = await fetch(ENDPOINT+"/servers/get?server_id="+selectedServer, {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("session_token")
@@ -45,21 +44,38 @@ export async function updateTitlebar() {
     })
     const serverData = await serverResponse.json()
     const server = serverData.servers[0]
-    titlebar.textContent = server.name
 
-    if (selectedChat) {
-        const chatResponse = await fetch(ENDPOINT+"/chats/get?chat_id="+selectedChat, {
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("session_token")
+    const serverInfoContent = document.createElement("span")
+    
+    if (server) {
+        serverInfoContent.textContent = server.name
+        titlebar.appendChild(serverInfoContent)
+
+        const inviteButton = document.createElement("button")
+        inviteButton.textContent = "📩"
+        inviteButton.addEventListener("click", async () => {
+            try {
+                const res = await fetch(ENDPOINT+`/servers/invite?server_id=${selectedServer}`, {
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("session_token")
+                    }
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    await navigator.clipboard.writeText(data.invite);
+                    alert("copied")
+                } else {
+                    console.log("error: " + data.reason);
+                }
+            } catch (err) {
+                console.error(err);
             }
-        })
-        const chatData = await chatResponse.json()
-        console.log(chatData)
-        const chat = chatData.chats[0]
-        if (chat) titlebar.textContent = titlebar.textContent + " - " + chat.name
+
+        });
+        titlebar.appendChild(inviteButton)
 
     }
-
 
 }
 
