@@ -465,3 +465,36 @@ export function handleSocketMessage(msg) {
         messageContainer.scrollTop = messageContainer.scrollHeight; // auto-scroll
     })();
 }
+export function handleSocketNewChat(chat) {
+    // ignore chats that aren't for the selected servers
+    if (chat.server_id !== selectedServer) return;
+
+    const chatList = document.getElementById("chats")
+
+    const chatContainer = document.createElement("div")
+    chatContainer.classList.add("chat-container")
+    chatContainer.id = chat.id
+
+    const chatIcon = document.createElement("div")
+    chatIcon.classList.add("chat-icon")
+    chatIcon.textContent = "🗨"
+
+    const chatName = document.createElement("div")
+    chatName.classList.add("chat-name")
+    chatName.textContent = chat.name
+
+    chatContainer.appendChild(chatIcon)
+    chatContainer.appendChild(chatName)
+
+    chatContainer.addEventListener("click", () => {
+        setSelectedChat(chatContainer.id)
+        const selected = chatList.querySelector(".selected")
+        if (selected) {
+            selected.classList.toggle("selected")
+        }
+        chatContainer.classList.toggle("selected")
+        syncMessages()
+    })
+    
+    chatList.appendChild(chatContainer)
+}

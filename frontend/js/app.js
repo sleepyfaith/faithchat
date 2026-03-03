@@ -1,4 +1,5 @@
-import { toggleTheme, updateTheme, loadTheme, toggleSettingsView, initProfileView, sendMessage, clearMessagesFromChat, loadSelectedServer, loadSelectedChat, handleSocketMessage} from "./utils.js";
+import { toggleTheme, updateTheme, loadTheme, toggleSettingsView, initProfileView, sendMessage, clearMessagesFromChat, 
+        loadSelectedServer, loadSelectedChat, handleSocketMessage, handleSocketNewChat} from "./utils.js";
 import { syncMessages } from "./messages.js";
 import { initChatList } from "./chats.js";
 import { initServerList } from "./servers.js";
@@ -18,6 +19,10 @@ socket.on("connect_error", (err) => console.log("Connection error:", err));
 socket.on("new_message", (msg) => {
     console.log(msg)
     handleSocketMessage(msg)
+});
+socket.on("new_chat", (chat) => {
+    console.log(chat)
+    handleSocketNewChat(chat)
 });
 
 loadSelectedServer()

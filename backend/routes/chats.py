@@ -3,6 +3,8 @@ from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3, uuid
 from utils import get_db, require_user, require_chat_access
 from app import socketio
+
+
 chats_bp = Blueprint("chats", __name__)
 
 @chats_bp.post("/create")
@@ -25,6 +27,9 @@ def create_chat():
         (chat_id, name, user_id, server_id)
     )
     db.commit()
+
+    socketio.emit("new_chat", {"server_id": server_id, "name": name, "chat_id": chat_id})
+
     return jsonify(ok=True, chat_id=chat_id)
 
 
@@ -134,7 +139,6 @@ def handle_send_message(data):
         },
         room=chat_id
     )
-
 
 
 
