@@ -134,8 +134,12 @@ export async function syncMessages() {
         messageElement.appendChild(messageContent)
         messageContainer.appendChild(messageElement)
 
-        fragment.appendChild(messageElement);
+        messageElement.dataset.timestamp = message.timestamp
+        messageElement.dataset.author = message.sender_id
 
+
+        fragment.appendChild(messageElement);
+        
         lastUser = message.sender_id
         lastTimestamp = message.timestamp
 

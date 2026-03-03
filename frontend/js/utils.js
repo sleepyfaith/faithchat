@@ -396,9 +396,10 @@ export function handleSocketMessage(msg) {
         let lastTimestamp = undefined;
 
         if (lastElement) {
-            lastUser = lastElement.dataset.senderId;
+            lastUser = lastElement.dataset.author;
             lastTimestamp = lastElement.dataset.timestamp;
         }
+        
 
         // check if new day
         let sameDay = lastTimestamp ? isSameDay(lastTimestamp, msg.timestamp) : false;
@@ -413,7 +414,6 @@ export function handleSocketMessage(msg) {
             fragment.appendChild(separator);
         }
 
-        // only add header if different author or new day
         if (lastUser !== msg.sender_id || !sameDay) {
             const messageContent = document.createElement("div");
             messageContent.classList.add("message-body");
@@ -449,7 +449,7 @@ export function handleSocketMessage(msg) {
 
             messageElement.appendChild(pfp);
             messageContent.appendChild(header);
-
+            
             // body (content)
             const body = document.createElement("p");
             body.classList.add("message-content");
