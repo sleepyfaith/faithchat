@@ -44,7 +44,6 @@ body {
 }
 
 #server-info {
-    width: 100%;
     height: 5%;
     border: 2px solid var(--border-normal);
     border-top: 0;
@@ -65,7 +64,6 @@ body {
 }
 
 .server-list {
-    width: 4rem;
     height: 100%;
     border-right: 2px solid var(--border-normal);
     color: var(--text-muted);
@@ -99,7 +97,6 @@ body {
 }
 .chat-list {
     position: relative;
-    width: 100%;
     height: 100%;
     padding: 1rem 0;
     border: 2px solid var(--border-normal);
@@ -144,7 +141,6 @@ body {
 }
 .profile-menu {
     position: relative;
-    width: 100%;
     height: 23%;
     border: 2px solid var(--border-normal);
     border-bottom: 0;
@@ -372,7 +368,9 @@ dialog::backdrop {
 
 .message-container {
     margin-top: 0.2rem;
-    height: calc(100% - 3.7rem);
+    height: calc(100% - 4rem);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .message {

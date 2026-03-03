@@ -15,13 +15,6 @@ export const socket = io(ENDPOINT, {
 socket.on("connect", () => console.log("connected!"));
 socket.on("connect_error", (err) => console.log("Connection error:", err));
 
-socket.on("error", (error) => {
-    console.error(error)
-})
-socket.on("status", (status) => {
-    console.log(status)
-})
-
 socket.on("new_message", (msg) => {
     console.log(msg)
     handleSocketMessage(msg)

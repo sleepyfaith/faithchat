@@ -145,5 +145,8 @@ export async function syncMessages() {
 
     }
     messageContainer.replaceChildren(fragment);
+
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+
 }
 
