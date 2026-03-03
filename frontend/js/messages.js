@@ -1,22 +1,21 @@
-import { userCache, ENDPOINT, selectedChat } from "./app.js"
-import { getDateString, beautifyTimestamp, isSameDay } from "./utils.js";
+import { userCache, ENDPOINT } from "./app.js"
+import { getDateString, beautifyTimestamp, isSameDay, selectedChat } from "./utils.js";
 import { showProfilePopup } from "./users.js"
 
 export async function syncMessages() { 
 
-
-    if (selectedChat == undefined) {
+    if (selectedChat == undefined || selectedChat == null) {
         return
     }
 
     // get user session token
     const token = localStorage.getItem("session_token");
-
+    
     let messages = undefined
 
     try {
         // request messages from backend
-        const response = await fetch(ENDPOINT+"/messages", {
+        const response = await fetch(ENDPOINT+"/chats/messages?chat_id="+selectedChat, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -40,11 +39,12 @@ export async function syncMessages() {
     const messageContainer = document.getElementById("msg-container");
 
 
+
     // add users to cache to prevent multiple useless calls to backend
     const uniqueIds = [...new Set(messages.map(m => m.sender_id))];
     await Promise.all(
     uniqueIds.map(async id => {
-        const res = await fetch(`${ENDPOINT}/user?id=${id}`);
+        const res = await fetch(`${ENDPOINT}/users/user?id=${id}`);
         userCache[id] = await res.json();
     })
     );
@@ -96,9 +96,9 @@ export async function syncMessages() {
             
             const pfp = document.createElement("img");
             if (user.pfp_id == null) {
-                pfp.src = ENDPOINT + "/default_pfp?id=" + user.id;
+                pfp.src = ENDPOINT + "/pfps/default?id=" + user.id;
             } else {
-                pfp.src = ENDPOINT + "/pfp?id=" + user.pfp_id;
+                pfp.src = ENDPOINT + "/pfps/pfp?id=" + user.pfp_id;
             }
 
             const header = document.createElement("div")
@@ -134,12 +134,19 @@ export async function syncMessages() {
         messageElement.appendChild(messageContent)
         messageContainer.appendChild(messageElement)
 
-        fragment.appendChild(messageElement);
+        messageElement.dataset.timestamp = message.timestamp
+        messageElement.dataset.author = message.sender_id
 
+
+        fragment.appendChild(messageElement);
+        
         lastUser = message.sender_id
         lastTimestamp = message.timestamp
 
     }
     messageContainer.replaceChildren(fragment);
+
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+
 }
 

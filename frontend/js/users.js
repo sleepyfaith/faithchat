@@ -3,14 +3,15 @@ import { userCache, ENDPOINT } from "./app.js"
 
 // tell backend to update user information
 export async function updateUser(data) {
+    const session_token = localStorage.getItem("session_token")
     try {
-        const response = await fetch(ENDPOINT+"/edit_user", {
+        const response = await fetch(ENDPOINT+"/users/edit", {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: { Authorization: "Bearer "+session_token, "Content-Type": "application/json" },
             body: JSON.stringify(data)
         });
         const result = await response.json();
-        console.log("Update result:", result);
+        console.log(result)
     } catch (err) {
         console.error("Error updating user:", err);
     }
@@ -37,7 +38,7 @@ export async function showProfilePopup(element, user_id) {
 
         const pfp = document.createElement("img")
         if (user.pfp_id == null) {
-            pfp.src = ENDPOINT+"/default_pfp?id="+user.id
+            pfp.src = ENDPOINT+"/pfps/default?id="+user.id
         }
 
         header.appendChild(pfp)

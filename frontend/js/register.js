@@ -3,8 +3,6 @@ const ENDPOINT = "http://localhost:20349"
 document.getElementById("register-form").addEventListener("submit", async(e) => {
     e.preventDefault(); // stop normal form submission
 
-    console.log(ENDPOINT)
-
     const form = e.target;
     const username = form.username.value;
     const password = form.password.value;
@@ -15,7 +13,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
         return;
     }
 
-    const response = await fetch(ENDPOINT+"/register", {
+    const response = await fetch(ENDPOINT+"/users/register", {
         method: "post",
         headers: {
             "Content-Type": "application/json"
@@ -33,7 +31,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
 
 
     // login after register
-    const loginResponse = await fetch(ENDPOINT+"/login", {
+    const loginResponse = await fetch(ENDPOINT+"/users/login", {
         method: "post",
         headers: {
             "Content-Type": "application/json"

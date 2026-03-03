@@ -1,16 +1,34 @@
-import { toggleTheme, updateTheme, loadTheme, toggleSettingsView, initProfileView } from "./utils.js";
+import { toggleTheme, updateTheme, loadTheme, toggleSettingsView, initProfileView, sendMessage, clearMessagesFromChat, 
+        loadSelectedServer, loadSelectedChat, handleSocketMessage, handleSocketNewChat} from "./utils.js";
 import { syncMessages } from "./messages.js";
 import { initChatList } from "./chats.js";
+import { initServerList } from "./servers.js";
 
 export const ENDPOINT = "http://localhost:20349"
 export const userCache = {};
-export let selectedChat = null;
 
-export function setSelectedChat(chatId) {
-    selectedChat = chatId;
-}
+export const socket = io(ENDPOINT, {
+    auth: {
+        token: localStorage.getItem("session_token")
+    }
+});
+
+socket.on("connect", () => console.log("connected!"));
+socket.on("connect_error", (err) => console.log("Connection error:", err));
+
+socket.on("new_message", (msg) => {
+    console.log(msg)
+    handleSocketMessage(msg)
+});
+socket.on("new_chat", (chat) => {
+    console.log(chat)
+    handleSocketNewChat(chat)
+});
+
+loadSelectedServer()
+initServerList()
+loadSelectedChat()
 initChatList()
-
 
 // when typing in chat box send message on enter but not when shift + enter
 const box = document.getElementById("msg");
@@ -21,7 +39,7 @@ box.addEventListener("keydown", (e) => {
         }
 
         e.preventDefault();             // stop newline
-        send();                         // send message
+        sendMessage();                  // send message
 
         setTimeout(syncMessages, 100)   // sync messages after sending
     }
@@ -30,7 +48,6 @@ box.addEventListener("keydown", (e) => {
 // on page load, load the current theme, sync messages and continue syncing every 10s, and init the profile view in right sidebar
 loadTheme()
 syncMessages()
-setInterval(syncMessages, 10_000)
 initProfileView()
 
 // toggle theme on slider toggle

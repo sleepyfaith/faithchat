@@ -9,6 +9,7 @@ body {
 }
 
 .app-container {
+    margin: 0;
     display: flex;
     height: 100vh;
 }
@@ -18,11 +19,13 @@ body {
 }
 .left {
     padding-right: 1rem;
+    display: flex;
 }
 .right {
     padding-left: 1rem;
 }
 .centre-container {
+    margin: 0;
     position: relative;
     width: 49%;
 
@@ -32,25 +35,92 @@ body {
     padding: 1rem;
 }
 
-
-.chat-list {
+.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
     width: 100%;
-    height: fit-content;
-    padding: 1rem 0;
+}
+
+#server-info {
+    height: 5%;
     border: 2px solid var(--border-normal);
     border-top: 0;
+    font-size: 2rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    button {
+        margin-right: 0.5rem;
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+    }
+    span {
+        margin-left: 0.5rem;
+    }
+}
+
+.server-list {
+    height: 100%;
+    border-right: 2px solid var(--border-normal);
+    color: var(--text-muted);
+    padding: 0 1ch;
+    margin: 0 1ch;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1ch;
+    align-items: center;
+    .server-container .create-server {
+        display: flex;
+        justify-content: center;
+        height: fit-content;
+        cursor: pointer;
+    }
+    .server-icon {
+        font-size: 2rem;
+        border: 1px solid var(--border-normal);
+        aspect-ratio: 1;
+        width: 3rem;
+        height: 3rem;
+        text-align: center;
+        border-radius: 50%;
+        line-height: 1.5;
+        cursor: pointer;
+    }
+    .selected {
+        color: var(--text);
+    }
+}
+.chat-list {
+    position: relative;
+    height: 100%;
+    padding: 1rem 0;
+    border: 2px solid var(--border-normal);
+    border-width: 0 2px;
     color: var(--text-muted);
 
     .chat-container {
+        margin-left: 50%;
+        transform: translateX(-50%);
         display: flex;
         justify-content: center;
         gap: 0.5rem;
         height: fit-content;
         cursor: pointer;
+        min-width: 25ch;
+        border-radius: 10px;
+        line-height: 1.5;
+    }
+    .chat-container:hover {
+        color: var(--text);
+        background-color: rgba(0,0,0,0.2)
     }
     .chat-icon {
         font-size: 1.5rem;
-        line-height: 1.5;
     }
     .chat-name {
         font-size: 1.5rem;
@@ -60,17 +130,23 @@ body {
     .selected {
         color: var(--text);
     }
+    .create-chat {
+        position: absolute;
+        font-size: 2rem;
+        left: 100%;
+        transform: translate(-150%, -50%);
+        cursor: pointer;
+    }
 
 }
 .profile-menu {
     position: relative;
-    width: 100%;
     height: 23%;
     border: 2px solid var(--border-normal);
+    border-bottom: 0;
 
     display: flex;
     flex-direction: column;
-
 
     .edit-btn {
         position: absolute;
@@ -149,6 +225,73 @@ body {
 
 }
 
+#create-server-popup, #join-server-popup, #create-chat-popup {
+    position: fixed;
+    width: 30rem;
+    height: 15rem;
+
+    background:  var(--bg);
+    border: 2px solid var(--border-normal);
+    color: var(--text);
+
+
+    p {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+    input {
+        position: fixed;
+        border: 2px solid var(--border-normal);
+        border-radius: 10px;
+        height: 2rem;
+        width: 20rem;
+        background: var(--bg-dark);
+        color: var(--text);
+        left: 50%;
+        transform: translateX(-50%);
+
+    }
+    input::placeholder {
+        color: var(--text-muted);
+        opacity: 50%;
+    }
+    button {
+        position: fixed;
+        border: 2px solid var(--border-normal);
+        border-radius: 10px;
+        background: var(--bg-light);
+        color: var(--text);
+        height: 2rem;
+        width: 5rem;
+        left: 50%;
+        transform: translate(-50%, 150%);
+    }
+    .join.link, .create.link {
+        width: fit-content;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        transform: translate(-50%, 275%);
+    }
+    .join.link:hover .text, .create.link:hover .text{
+        text-decoration: underline;
+    }
+    .join.link:before {
+        content: "have an invite? ";
+        color: var(--border-normal);
+    }
+    .create.link:before {
+        content: "no invite to a server? ";
+        color: var(--border-normal);
+    }
+
+
+}
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
 #profile-popup {
     position: absolute;
     background: var(--bg-dark);
@@ -224,7 +367,10 @@ body {
 
 
 .message-container {
-    height: calc(100% - 3.5rem);
+    margin-top: 0.2rem;
+    height: calc(100% - 4rem);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .message {
@@ -295,6 +441,10 @@ body {
         line-height: 3.25;
         font-size: 0.9rem;
         color: var(--text);
+    }
+    textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 50%;
     }
 }
 
