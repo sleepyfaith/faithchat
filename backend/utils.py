@@ -100,12 +100,22 @@ def close_db(exception):
     if db is not None and current_app.config["DATABASE"] != ":memory:":
         db.close()
 
-def require_user(db):
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Bearer "):
-        return None, jsonify(ok=False, reason="missing_token"), 401
+def require_user(db, type="http"):
 
-    token = auth.split(" ", 1)[1]
+    if type not in ["http", "socket"]:
+        print("type must be either http or socket")
+    
+    elif type == "http":
+        auth = request.headers.get("Authorization", "")
+        if not auth.startswith("Bearer "):
+            return None, jsonify(ok=False, reason="missing_token"), 401
+        token = auth.split(" ", 1)[1]
+        
+    else: # socket 
+        token = request.environ.get("token")
+        if not token:
+            return None, jsonify(ok=False, reason="missing_token"), 401
+
     row = db.execute("SELECT user_id FROM sessions WHERE token=?", (token,)).fetchone()
     if not row:
         return None, jsonify(ok=False, reason="invalid_token"), 401

@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
+from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3, uuid
 from utils import get_db, require_user, require_chat_access
-
+from app import socketio
 chats_bp = Blueprint("chats", __name__)
 
 @chats_bp.post("/create")
@@ -63,7 +64,81 @@ def get_chats():
     ]
     return jsonify(chats=chats)
 
+@socketio.on("join_chat")
+def on_join(data):
+    
+    db = get_db()
+    user_id, error, status = require_user(db, type="socket")
+    
+    if error:
+        socketio.emit("error", {"reason": "unauthorized"})
+        return
 
+    chat_id = data.get("chat_id")
+    if not require_chat_access(db, user_id, chat_id):
+        socketio.emit("error", {"reason": "forbidden"})
+        return
+
+    join_room(chat_id)
+    socketio.emit("status", {"msg": f"user {user_id} joined chat {chat_id}"}, room=chat_id)
+
+@socketio.on("leave_chat")
+def on_leave(data):
+    chat_id = data.get("chat_id")
+    leave_room(chat_id)
+    socketio.emit("status", {"msg": f"user left chat {chat_id}"}, room=chat_id)
+
+
+@socketio.on("send_message")
+def handle_send_message(data):
+    db = get_db()
+    user_id, error, status = require_user(db, type="socket")
+    if error:
+        emit("error", {"reason": "unauthorized"})
+        return
+
+    chat_id = data.get("chat_id")
+    msg = data.get("message")
+    if not chat_id or not msg:
+        emit("error", {"reason": "missing chat_id or message"})
+        return
+
+    if not require_chat_access(db, user_id, chat_id):
+        emit("error", {"reason": "forbidden"})
+        return
+
+    msg_id = str(uuid.uuid4())
+    cursor = db.cursor()
+    cursor.execute(
+        "INSERT INTO messages (id, sender_id, chat_id, content) VALUES (?, ?, ?, ?)",
+        (msg_id, user_id, chat_id, msg)
+    )
+    db.commit()
+
+    cursor.execute(
+        "SELECT timestamp FROM messages WHERE id = ?",
+        (msg_id,)
+    )
+
+    row = cursor.fetchone()
+    timestamp = row["timestamp"]
+
+    emit(
+        "new_message",
+        {
+            "message_id": msg_id,
+            "sender_id": user_id,
+            "chat_id": chat_id,
+            "content": msg,
+            "timestamp": timestamp
+        },
+        room=chat_id
+    )
+
+
+
+
+# keeping old rest api for now :3
 @chats_bp.post("/message")
 def message():
     data = request.json
