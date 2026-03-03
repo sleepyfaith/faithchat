@@ -31,3 +31,5 @@ i have no intentions of actually hosting this, its just a fun project :3
   
    ![Chat Example](screenshots/chat_example.png)  
    ![Message Example](screenshots/message_example.png)
+
+GUI commit
