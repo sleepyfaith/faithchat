@@ -1,5 +1,5 @@
 import { ENDPOINT, userCache, socket } from "./app.js"
-import { updateUser } from "./users.js";
+import { updateUser, showProfilePopup} from "./users.js";
 import { syncMessages } from "./messages.js";
 import { initServerList } from "./servers.js";
 
@@ -473,7 +473,7 @@ export function handleSocketNewChat(chat) {
 
     const chatContainer = document.createElement("div")
     chatContainer.classList.add("chat-container")
-    chatContainer.id = chat.id
+    chatContainer.id = chat.chat_id
 
     const chatIcon = document.createElement("div")
     chatIcon.classList.add("chat-icon")
