@@ -78,3 +78,61 @@ export function updateTheme() {
     document.documentElement.style.setProperty("--base-colour", hue);
     localStorage.setItem("base-colour", hue)
 }
+
+
+export function openSettingsPopup() {
+    const popup = document.getElementById("settings-popup")
+
+    popup.innerHTML = `
+        <div class="settings-container">
+
+            <aside class="settings-sidebar">
+                <button data-tab="profile">Profile</button>
+                <button data-tab="app">App</button>
+            </aside>
+
+            <section class="settings-content" id="settings-content"></section>
+
+            <button class="close button" id="settings-close">×</button>
+
+        </div>
+    `
+
+    document.getElementById("settings-close")
+        .addEventListener("click", () => popup.close())
+
+    setupSidebar()
+
+    loadSettingsTab("profile")
+
+    popup.showModal()
+}
+function setupSidebar() {
+    const buttons = document.querySelectorAll(".settings-sidebar button")
+
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            loadSettingsTab(btn.dataset.tab)
+        })
+    })
+}
+function loadSettingsTab(tab) {
+    const container = document.getElementById("settings-content")
+
+    switch (tab) {
+        case "profile":
+            container.innerHTML = getProfileSettings()
+            break
+
+        case "app":
+            container.innerHTML = getAppSettings()
+            break
+    }
+}
+export function getProfileSettings() {
+    return ``
+}
+
+export function getAppSettings() {
+    return ``
+}

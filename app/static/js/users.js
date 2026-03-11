@@ -1,4 +1,5 @@
 import { userCache } from "./app.js";
+import { openSettingsPopup } from "./utils.js";
 
 export async function getUser(userId) {
     if (!userCache[userId]) {
@@ -111,7 +112,7 @@ export async function loadUserProfileInfo() {
 
     fragment.appendChild(profileInfoContainer)
     const settings = document.createElement("button")
-    settings.addEventListener("click", () => {})
+    settings.addEventListener("click", () => { openSettingsPopup() })
     settings.textContent = "⚙"
     fragment.appendChild(settings)
     console.log(fragment)

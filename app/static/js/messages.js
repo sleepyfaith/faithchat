@@ -1,7 +1,7 @@
 import { isSameDay, getDateString, beautifyTimestamp } from "./utils.js";
 import { selectedChat } from "./chats.js";
 import { socket, userCache } from "./app.js";
-import { getUser } from "./users.js"
+import { getUser, showProfilePopup } from "./users.js"
 
 
 export async function loadMessages() { 

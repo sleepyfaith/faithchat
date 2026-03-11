@@ -14,6 +14,10 @@ dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
+button {
+    cursor: pointer;
+}
+
 .hidden {
     display: none !important;
 }
@@ -177,6 +181,74 @@ dialog::backdrop {
 
 }
 
+#profile-popup {
+    position: absolute;
+    background: var(--bg-dark);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 9999;
+
+    textarea {
+        background-color: transparent;
+        color: var(--text);
+        border: 2px solid var(--text);
+        font-size: 1.3rem;
+        height: fit-content;
+        width: 10ch;
+        resize: none;
+    }
+    .profile-header {
+        display: flex;
+        gap: 0.5rem;
+        img {
+            width: 72px;
+            height: 72px;
+
+            border-radius: 50%;
+        }
+        .profile-username {
+            font-weight: bold;
+            font-size: 1.3rem;
+            text-align: center;
+            line-height: 3.4;
+        }
+        button {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            height: 2rem;
+            width: 2rem;
+            font-size: 1.5rem;
+            line-height: 3;
+            margin: 0;
+        }
+    }
+    .about-container {
+        margin-top: 1rem;
+        .profile-about-header {
+            font-weight: bold;
+            margin: 0;
+        }
+        .profile-about-content {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        button {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            height: 2rem;
+            width: 2rem;
+            font-size: 1rem;
+            margin: 0;
+        }
+        textarea {
+            font-size: 0.9rem;
+        }        
+    }
+}
 
 .centre-container {
     flex: 1;
@@ -258,6 +330,34 @@ dialog::backdrop {
             color: var(--text-muted);
             opacity: 50%;
         }
+    }
+
+}
+
+#settings-popup {
+    position: fixed;
+    width: 75vw;
+    height: 75vh;
+
+    background:  var(--bg);
+    border: 2px solid var(--border-normal);
+    color: var(--text);
+
+    button {
+        border: 2px solid var(--border-normal);
+        border-radius: 10px;
+        background: var(--bg-light);
+        color: var(--text);
+
+    }
+    .close.button {
+        position: absolute;
+        height: 2rem;
+        width: 2rem;
+        left: 100%;
+        top: 0%;
+        transform: translate(-110%, 10%);
+
     }
 
 }
