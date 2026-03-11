@@ -128,11 +128,34 @@ function loadSettingsTab(tab) {
             container.innerHTML = getAppSettings()
             break
     }
+
+
+    const hueSlider = container.querySelector("#hue-slider")
+    const themeSwitch = container.querySelector("#theme-switch")
+
+    if (hueSlider) {
+        hueSlider.addEventListener("input", updateTheme)
+    }
+
+    if (themeSwitch) {
+        themeSwitch.addEventListener("click", toggleTheme)
+    }
 }
 export function getProfileSettings() {
     return ``
 }
 
 export function getAppSettings() {
-    return ``
+    return `
+        <div class="separator">appearance</div>
+        <input id="hue-slider" type="range" min="0" max="360" value="${localStorage.getItem("base-colour")}>
+        <div class="theme-toggle">
+            <div class="switch-container">
+            <span class="switch-label" data-i18n="settings.theme">dark mode</span>
+            <label class="switch" for="theme-switch">
+            <input id="theme-switch" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>  
+    `
 }
