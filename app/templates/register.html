@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>bleh :p</title>
-        <link rel="stylesheet" href="../css/register.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
     </head>
     <body>
 
@@ -20,9 +20,9 @@
 
                 <button type="submit">register</button>
             </form>
-            <a href="login.html">login</a>
+            <a href="login">login</a>
         </div>
 
     </body>
-    <script src="../js/register.js"></script>
+    <script src="{{ url_for('static', filename='js/register.js') }}" type="module"></script>
 </html>

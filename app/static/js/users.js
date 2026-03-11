@@ -1,11 +1,17 @@
-import { userCache, ENDPOINT } from "./app.js"
+import { userCache } from "./app.js";
 
+export async function getUser(userId) {
+    if (!userCache[userId]) {
+        const res = await fetch(`/users/user?id=${userId}`);
+        userCache[userId] = await res.json();
+    }
+    return userCache[userId];
+}
 
-// tell backend to update user information
 export async function updateUser(data) {
     const session_token = localStorage.getItem("session_token")
     try {
-        const response = await fetch(ENDPOINT+"/users/edit", {
+        const response = await fetch("/users/edit", {
             method: "PATCH",
             headers: { Authorization: "Bearer "+session_token, "Content-Type": "application/json" },
             body: JSON.stringify(data)
@@ -17,7 +23,6 @@ export async function updateUser(data) {
     }
 }
 
-// render selected user in pre-existing profile popup and unhide it
 export async function showProfilePopup(element, user_id) {
     const user = userCache[user_id];
 
@@ -38,7 +43,9 @@ export async function showProfilePopup(element, user_id) {
 
         const pfp = document.createElement("img")
         if (user.pfp_id == null) {
-            pfp.src = ENDPOINT+"/pfps/default?id="+user.id
+            pfp.src = "/pfps/default?id=" + user.id;
+        } else {
+            pfp.src = "/pfps/pfp?id=" + user.pfp_id;
         }
 
         header.appendChild(pfp)
@@ -77,4 +84,38 @@ export async function showProfilePopup(element, user_id) {
         popup.classList.remove("hidden");
 
     }
+}
+
+export async function loadUserProfileInfo() {
+    const profileInfo = document.getElementById("profile-info")
+    const fragment = document.createDocumentFragment();
+
+    const userId = localStorage.getItem("logged_in_user")
+
+    let user = await getUser(userId)
+
+    const profileInfoContainer = document.createElement("div")
+    profileInfoContainer.classList = "profile-info container"
+    const pfp = document.createElement("img")
+    if (user.pfp_id == null) {
+        pfp.src = "/pfps/default?id=" + user.id;
+    } else {
+        pfp.src = "/pfps/pfp?id=" + user.pfp_id;
+    }
+
+    const username = document.createElement("span")
+    username.textContent = user.username
+
+    profileInfoContainer.appendChild(pfp)
+    profileInfoContainer.appendChild(username)
+
+    fragment.appendChild(profileInfoContainer)
+    const settings = document.createElement("button")
+    settings.addEventListener("click", () => {})
+    settings.textContent = "⚙"
+    fragment.appendChild(settings)
+    console.log(fragment)
+
+    profileInfo.replaceChildren(fragment)
+
 }

@@ -1,9 +1,11 @@
-import { ENDPOINT } from "./app.js"
-import { initChatList } from "./chats.js"
-import { selectedServer, setSelectedServer } from "./utils.js"
+import { loadChatList, clearMessagesFromChat, loadSelectedChat } from "./chats.js";
+import { setSelectedChat } from "./chats.js";
 
-export async function initServerList() {
-    const response = await fetch(ENDPOINT+"/servers/", {
+export let selectedServer = null;
+
+
+export async function loadServerList() {
+    const response = await fetch("/servers/", {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("session_token")
         }
@@ -15,49 +17,62 @@ export async function initServerList() {
     const serverList = document.getElementById("servers")
     const fragment = document.createDocumentFragment();
 
-    try {
-
-        for (let i = 0; i < servers.length; i++) {
-            const server = servers[i]
-
-            const serverContainer = document.createElement("div")
-            serverContainer.classList.add("server-container")
-            serverContainer.id = server.id
-            
-            if (selectedServer == server.id) {
-                serverContainer.classList.add("selected")
-            }
-
-            const serverIcon = document.createElement("div")
-            serverIcon.classList.add("server-icon")
-
-            let initials = ""
-            let words = server.name.split(" ")
-            for (let i = 0; i < words.length; i++) {
-                initials = initials + words[i][0]
-            }
-            serverIcon.textContent = initials
-            
-            serverContainer.appendChild(serverIcon)
-
-            // select server on click
-            serverContainer.addEventListener("click", () => { selectServer(serverContainer) })
-
-
-            fragment.appendChild(serverContainer)
-        }
-    }
-    catch(e) {console.error(e)}
-
     const createServer = document.createElement("div")
     createServer.classList.add("create-server")
     createServer.classList.add("server-icon")
     createServer.textContent = "+"
     createServer.addEventListener("click", () => { openCreateServerPopup() } )
-    fragment.appendChild(createServer)
     
+    if (servers) {
+        try {
+            for (let i = 0; i < servers.length; i++) {
+                const server = servers[i]
 
+                const serverContainer = document.createElement("div")
+                serverContainer.classList.add("server-container")
+                serverContainer.id = server.id
+                
+                if (selectedServer == server.id) {
+                    serverContainer.classList.add("selected")
+                }
+
+                const serverIcon = document.createElement("div")
+                serverIcon.classList.add("server-icon")
+
+                let initials = ""
+                let words = server.name.split(" ")
+                for (let i = 0; i < words.length; i++) {
+                    initials = initials + words[i][0]
+                }
+                serverIcon.textContent = initials
+                
+                serverContainer.appendChild(serverIcon)
+
+                // select server on click
+                serverContainer.addEventListener("click", () => { selectServer(serverContainer) })
+
+
+                fragment.appendChild(serverContainer)
+            }
+        } catch(e) {console.error(e)}
+    }
+    fragment.appendChild(createServer)
     serverList.replaceChildren(fragment)
+
+}
+
+export function setSelectedServer(serverId) {
+    selectedServer = serverId;
+    clearMessagesFromChat();
+    loadSelectedChat();
+    loadServerInfo();
+    localStorage.setItem("selected-server", serverId)
+}
+export function loadSelectedServer() {
+    const server = localStorage.getItem("selected-server")
+    if (server != "null") {
+        setSelectedServer(server)
+    }
 }
 
 async function openCreateServerPopup() {
@@ -153,8 +168,9 @@ async function openJoinServerPopup() {
     popup.showModal()
     inviteInput.focus()
 }
+
 async function createServer(name) {
-    const response = await fetch(ENDPOINT+"/servers/create", {
+    const response = await fetch("/servers/create", {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("session_token"),
@@ -167,11 +183,11 @@ async function createServer(name) {
     if (!response.ok) {
         throw new Error("failed to create server "+name)
     }
-    initServerList()
+    loadServerList()
 
 }
 async function joinServer(code) {
-    const response = await fetch(ENDPOINT+"/servers/join?invite="+code, {
+    const response = await fetch("/servers/join?invite="+code, {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("session_token"),
@@ -181,7 +197,7 @@ async function joinServer(code) {
     if (!response.ok) {
         throw new Error("failed to join server ", response.data)
     }
-    initServerList()
+    loadServerList()
 
 }
 
@@ -195,6 +211,66 @@ async function selectServer(serverContainer) {
     }
     serverContainer.classList.toggle("selected")
 
-    initChatList()
+    loadChatList()
 }
 
+export async function loadServerInfo() {
+    const titlebar = document.getElementById("server-info")
+    titlebar.innerHTML = ""
+
+    const serverResponse = await fetch("/servers/get?server_id="+selectedServer, {
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("session_token")
+        }
+    })
+    const serverData = await serverResponse.json()
+
+    const serverInfoContent = document.createElement("span")
+    
+    if (serverData.servers) {
+        
+        const server = serverData.servers[0]
+        if (!server) {
+            if (!titlebar.classList.contains("hidden")) {
+                titlebar.classList.add("hidden")
+            }
+            return
+        }
+
+        if (titlebar.classList.contains("hidden")) {
+            titlebar.classList.remove("hidden")
+        }        
+        serverInfoContent.textContent = server.name
+        titlebar.appendChild(serverInfoContent)
+
+        const inviteButton = document.createElement("button")
+        inviteButton.textContent = "x"
+        inviteButton.addEventListener("click", async () => {
+            try {
+                const res = await fetch(`/servers/invite?server_id=${selectedServer}`, {
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("session_token")
+                    }
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    await navigator.clipboard.writeText(data.invite);
+                    alert("copied")
+                } else {
+                    console.log("error: " + data.reason);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+        });
+        titlebar.appendChild(inviteButton)
+
+    } else {
+        if (!titlebar.classList.contains("hidden")) {
+            titlebar.classList.add("hidden")
+        }
+    }
+
+}

@@ -1,5 +1,3 @@
-const ENDPOINT = "http://localhost:20349"
-
 document.getElementById("login-form").addEventListener("submit", async(e) => {
     e.preventDefault(); // stop normal form submission
 
@@ -7,7 +5,7 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
     const username = form.username.value;
     const password = form.password.value;
 
-    const response = await fetch(ENDPOINT+"/users/login", {
+    const response = await fetch("/users/login", {
         method: "post",
         headers: {
             "Content-Type": "application/json"
@@ -21,7 +19,7 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
         localStorage.setItem("session_token", result.token)
         localStorage.setItem("logged_in_user", result.user_id)
 
-        window.location.href = "../html/app.html"
+        window.location.href = "chat"
     } else {
         alert("username or password is incorrect")
     }

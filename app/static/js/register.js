@@ -1,5 +1,3 @@
-const ENDPOINT = "http://localhost:20349"
-
 document.getElementById("register-form").addEventListener("submit", async(e) => {
     e.preventDefault(); // stop normal form submission
 
@@ -13,7 +11,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
         return;
     }
 
-    const response = await fetch(ENDPOINT+"/users/register", {
+    const response = await fetch("/users/register", {
         method: "post",
         headers: {
             "Content-Type": "application/json"
@@ -31,7 +29,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
 
 
     // login after register
-    const loginResponse = await fetch(ENDPOINT+"/users/login", {
+    const loginResponse = await fetch("/users/login", {
         method: "post",
         headers: {
             "Content-Type": "application/json"
@@ -45,6 +43,6 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
         localStorage.setItem("session_token", loginResult.token)
         localStorage.setItem("logged_in_user", loginResult.user_id)
 
-        window.location.href = "../html/app.html"
+        window.location.href = "chat"
     }
 })

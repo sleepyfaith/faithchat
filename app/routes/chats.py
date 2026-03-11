@@ -28,7 +28,7 @@ def create_chat():
     )
     db.commit()
 
-    socketio.emit("new_chat", {"server_id": server_id, "name": name, "chat_id": chat_id})
+    socketio.emit("new_chat", {"server_id": server_id, "name": name, "id": chat_id})
 
     return jsonify(ok=True, chat_id=chat_id)
 

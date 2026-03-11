@@ -1,7 +1,7 @@
 from flask import Blueprint, request, send_file, jsonify
 import os, io, mimetypes
 from utils import get_db, require_user
-from generate_pfp import generate_user_pfp
+from utils import generate_user_pfp
 
 pfps_bp = Blueprint("pfps", __name__)
 
@@ -23,9 +23,12 @@ def update_pfp():
     if ext not in ("png", "jpg", "jpeg", "gif", "webp"):
         return jsonify(ok=False, reason="invalid file type")
 
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    uploads_dir = os.path.join(base_dir, "uploads", "pfps")
+    os.makedirs(uploads_dir, exist_ok=True)
+
     filename = f"{user_id}.{ext}"
-    os.makedirs("pfp_storage", exist_ok=True)
-    filepath = os.path.join("pfp_storage", filename)
+    filepath = os.path.join(uploads_dir, filename)
     image.save(filepath)
 
     db.execute("UPDATE users SET pfp_id=? WHERE id=?", (filename, user_id))

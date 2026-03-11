@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_socketio import SocketIO
 
 
@@ -33,6 +33,17 @@ def create_app(testing=False, db_path="data.db"):
     app.register_blueprint(chats_bp, url_prefix="/chats")
     app.register_blueprint(pfps_bp, url_prefix="/pfps")
 
+    @app.route("/register")
+    def register():
+        return render_template("register.html")  
+
+    @app.route("/login")
+    def login():
+        return render_template("login.html")  
+
+    @app.route("/chat")
+    def chat():
+        return render_template("chat.html")
 
     app.teardown_appcontext(close_db)
 

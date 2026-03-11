@@ -1,5 +1,5 @@
 :root {
-    --base-colour: 260;
+    --base-colour: 0;
 }
 
 html.light {
@@ -18,9 +18,8 @@ html.light {
     --border-subtle: hsl(var(--base-colour), 50%, 50%, 0.5) !important;
     --border-faint: hsl(var(--base-colour), 50%, 50%, 0.25) !important;
 
-
-
 }
+
 html.dark {
     --bg-dark: hsl(var(--base-colour), 100%, 5%);
     --bg: hsl(var(--base-colour), 100%, 10%);

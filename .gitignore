@@ -1,4 +1,5 @@
-backend/pfp_storage/
-backend/data.db
-backend/__pycache__/
-backend/routes/__pycache__/
+__pycache__/
+*.pyc
+
+*.db
+uploads/
